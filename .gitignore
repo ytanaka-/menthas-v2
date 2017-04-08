@@ -1,0 +1,8 @@
+*.swp
+.DS_Store
+node_modules
+*.log
+coverage/
+config.js
+key.json
+data

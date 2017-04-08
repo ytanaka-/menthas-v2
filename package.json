@@ -1,0 +1,33 @@
+{
+  "name": "menthas-v2",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "babel src -d dest",
+    "start": "node dest/app.js"
+  },
+  "author": "yu_tanaka",
+  "license": "",
+  "dependencies": {
+    "@google-cloud/datastore": "^0.7.*",
+    "@google-cloud/pubsub": "^0.8.*",
+    "async": "^2.2.0",
+    "cheerio-httpcli": "^0.6.11",
+    "express": "^4.15.2",
+    "gstore-node": "^1.0.0",
+    "jade": "^1.11.0",
+    "lodash": "^4.17.4",
+    "moment": "^2.18.1",
+    "rss": "^1.2.2",
+    "serve-favicon": "^2.4.2",
+    "xml2js": "^0.4.17"
+  },
+  "devDependencies": {
+    "babel-cli": "^6.24.0",
+    "babel-preset-env": "^1.2.2",
+    "babel-preset-es2015": "^6.24.0",
+    "mocha": "^3.2.0"
+  }
+}
