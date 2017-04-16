@@ -5,13 +5,13 @@ import favicon from "serve-favicon"
 const app = express();
 
 app.use('/', require('./controller/index'));
-app.use('/api/v1/', require('./controller/api'));
+app.use('/api/', require('./controller/api'));
 
 app.set('views', path.join(__dirname, 'view'));
 app.set('view engine', 'jade');
 app.disable('x-powered-by');
 
-app.use(express.static(path.resolve('public')));
+app.use(express.static(path.resolve(__dirname + '/public')));
 app.use(favicon(__dirname + '/public/images/favicon.ico'));
 
 

@@ -29,7 +29,7 @@ router.get('/categories', (req, res) => {
 router.get('/categories/:name/pages', (req, res) => {
   const name = req.params.name;
   let offset = 0;
-  if(Number.isInteger(Number(req.query.offset))){
+  if (Number.isInteger(Number(req.query.offset))) {
     offset = Number(req.query.offset);
   }
   if (name === "top") {

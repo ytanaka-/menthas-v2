@@ -12,13 +12,10 @@ html
     meta(name="description" content="Menthas(メンタス)は、プログラマ向けニュースリーダーです。各カテゴリごとにはてなブックマークから優秀なキュレーターを選別しニュースを収集しています。")
     title Menthas.com
 
-    //- JavaScript
-    link(rel='stylesheet', href='/css/menthas.css')
     link(rel='alternate', type='application/rss+xml' title='top' href='/rss')
     if category
       link(rel='alternate', type='application/rss+xml' title='#{category}' href='/#{category}/rss')
 
   body
-    #content
-      div#wrapper
-      script(src="/js/bundle.js")
+    div#app
+    script(src="/js/bundle.js")
