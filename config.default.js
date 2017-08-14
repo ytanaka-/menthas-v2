@@ -21,10 +21,6 @@ module.exports = {
     namespace: ''
   },
 
-  pubsub: {
-    topicName: 'menthas-topic'
-  },
-
   cralwer: {
     UA: ''
   }
