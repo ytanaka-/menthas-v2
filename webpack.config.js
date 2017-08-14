@@ -1,13 +1,14 @@
 var webpack = require("webpack");
+var path = require("path");
 
 module.exports = {
-  entry: './src/frontend/main',
+  entry: './src/frontend/main.js',
   output: {
     path: __dirname + '/dest/public/js',
     filename: 'bundle.js'
   },
   module: {
-    loaders: [
+    rules: [
       {
         test: /\.vue$/, loader: 'vue-loader'
       },

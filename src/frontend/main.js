@@ -7,10 +7,14 @@ import store from './store/index'
 Vue.use(VueRouter);
 
 const router = new VueRouter({
+  mode: 'history',
   routes: [
     { path: '/', component: NewsList },
-    { path: '/:category', component: NewsList }
-  ]
+    { path: '/:category', component: NewsList, props: true }
+  ],
+  scrollBehavior (to, from, savedPosition) {
+    return { x: 0, y: 0 }
+  }
 })
 
 new Vue({

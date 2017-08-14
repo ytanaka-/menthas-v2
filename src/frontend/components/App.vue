@@ -4,9 +4,8 @@
     <CategoryHeader>
     </CategoryHeader>
     <!-- main view -->
-    <router-view
-      class="view"
-      keep-alive>
+    <router-view class="view"
+                 keep-alive>
     </router-view>
   </div>
 </template>
@@ -26,8 +25,8 @@ export default {
   margin 0
   padding 0
 body
-  width 1000px
-  margin-right auto
-  margin-left auto
+  background-color #f5f5f5
+  font-family 'Noto Sans JP', sans-serif
+  font-size 100%
 
 </style>
