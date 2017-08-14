@@ -3,12 +3,13 @@ import Category from "../model/category"
 import Page from "../model/page"
 const router = express.Router();
 
-const PAGE_SIZE = 25;
+const PAGE_SIZE = 48;
 
 router.get('/categories', (req, res) => {
   Category.findAllForFrontEnd((err, categories) => {
     if (err) {
-      return cb(err);
+      console.log(err);
+      return res.sendStatus(500);
     } else {
       // @check
       //  top画面用にtopというcategoryを暫定で追加する

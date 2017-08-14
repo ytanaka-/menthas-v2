@@ -1,6 +1,9 @@
 import client from "cheerio-httpcli"
 import request from "request"
 
+// 最大受信量を10MBに制限
+client.set('maxDataSize', 1024 * 1024 * 10);
+
 class WebPageClient {
 
   // urlからpageのmetaデータを取得

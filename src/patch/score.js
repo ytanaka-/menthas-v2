@@ -25,7 +25,9 @@ class MenthasScore {
 
   // 再帰的に処理しながらCategoryを付加していく
   _recursiveAttach(pageCursor) {
-    Page.fetchListByCategory("", BULK_PAGE_SIZE, pageCursor, (err, entities, info) => {
+    // 指定日数前までのentityに対してscoreを更新していく
+    const base_date = moment().add(SCORE_UPDATE_BEFORE, 'days').format();
+    Page.fetchListByBookmarkDate(base_date, BULK_PAGE_SIZE, pageCursor, (err, entities, info) => {
       if (err) {
         console.log(err);
         return;
@@ -81,7 +83,6 @@ class MenthasScore {
 
   // 再帰的に処理しながらCategoryを付加していく
   _recursiveUpdateScore(pageCursor) {
-    // 指定日数前までのentityに対してscoreを更新していく
     const base_date = moment().add(SCORE_UPDATE_BEFORE, 'days').format();
     Page.fetchListByBookmarkDate(base_date, BULK_PAGE_SIZE, pageCursor, (err, entities, info) => {
       if (err) {
@@ -97,12 +98,12 @@ class MenthasScore {
         // categoryがまだ未分類の場合は次に回す
         // datastoreのqueryでnot-equalが使えないので暫定処置
         if(entity.category == ""){
-          cb();
+          return cb();
         }
         entity.score = this._calcScore(entity);
         Page.upsert(entity.url, entity, (err)=>{
           if(err){
-            cb(err);
+            return cb(err);
           }else{
             cb();
           }
@@ -145,4 +146,8 @@ class MenthasScore {
   }
 }
 
-module.exports = new MenthasScore()
+//module.exports = new MenthasScore()
+
+const m = new MenthasScore()
+m.updateLatestScore();
+//m.attachCategory();

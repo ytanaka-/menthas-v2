@@ -98,7 +98,7 @@ class HatebuClient {
   // output array
   // お気に入りに登録したURLとdateを配列を返す
   // offsetは20件単位で指定
-  getBookmarkerURLList(name, offset, cb) {
+  getBookmarkerLinkList(name, offset, cb) {
     if (typeof name === "undefined") {
       return cb(new Error("Bookmarker Name is undefined."));
     }
