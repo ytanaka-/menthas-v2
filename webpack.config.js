@@ -7,6 +7,11 @@ module.exports = {
     path: __dirname + '/dest/public/js',
     filename: 'bundle.js'
   },
+  resolve: {
+    alias: {
+      vue: 'vue/dist/vue.js'
+    }
+  },
   module: {
     rules: [
       {
@@ -19,6 +24,10 @@ module.exports = {
         query:{
           presets: ['es2015']
         }
+      },
+      {
+        test: /\.css$/,
+        use: [ 'style-loader', 'css-loader' ]
       }
     ]
   }

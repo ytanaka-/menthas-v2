@@ -1,7 +1,7 @@
 <template>
   <div id="contents">
-    <div id="page-items">
-      <template v-for="(page,index) in this.$store.state.pages">
+    <div class="newsbox">
+      <div v-for="(page,index) in this.$store.state.pages" :key="index">
         <div class="item" v-bind:key="page.url">
           <div class="category-color-bar">
             <div class="category-color-bar-main"
@@ -19,23 +19,28 @@
             </a>
           </div>
           <div class="item-footer">
-            <div class="title-description">
-              <a class="title"
+            <div class="title">
+              <a
                  v-bind:href="page.url"
                  target="_blank">
                 <p>{{page.title}}</p>
               </a>
-              <p class="description">{{page.description}}</p>
             </div>
+            <p class="description">{{page.description}}</p>
             <p class="source">source: {{page.site_name}}</p>
           </div>
         </div>
-      </template>
+      </div>
     </div>
+    <infinite-loading @infinite="infiniteHandler" spinner="waveDots" ref="infiniteLoading">
+      <span slot="no-results"></span>
+      <span slot="no-more"></span>
+    </infinite-loading>
   </div>
 </template>
 
 <script>
+import InfiniteLoading from 'vue-infinite-loading';
 
 export default {
   name: 'NewsList',
@@ -44,38 +49,55 @@ export default {
     category: String
   },
 
+  components: {
+    InfiniteLoading,
+  },
+  
   watch: {
     category: function (category) {
-      this.updatePages();
+      // categoryの更新があった場合はInfiniteをresetし再読み込みできるようにする
+      this.updatePages().then(() => {
+        this.$refs.infiniteLoading.$emit('$InfiniteLoading:reset');
+      });
     }
   },
 
   methods: {
     updatePages: function (offset = 0) {
       if (this.category) {
-        this.$store.dispatch("updatePages", {
+        return this.$store.dispatch("updatePages", {
           categoryName: this.category,
           offset: offset
         });
       } else {
-        this.$store.dispatch("updatePages", {
+        return this.$store.dispatch("updatePages", {
           categoryName: "top",
           offset: offset
         });
       }
+    },
+    infiniteHandler($state) {
+      const pageSize = this.$store.state.pages.length;
+      const MAX = 500;
+      // APIからエラーが返った場合とpageSizeがMAX以上の場合はcompleteとする
+      this.updatePages(pageSize).then(() => {
+        const _pageSize = this.$store.state.pages.length;
+        if(pageSize !== _pageSize && _pageSize < MAX){
+          $state.loaded();
+        }else{
+          $state.complete();
+        }
+      }).catch((err) => {
+        $state.complete();
+      });
     }
   },
 
   created() {
-    // この辺どうもうまくまとまらない
     if (this.category) {
-      this.$store.dispatch("updateCategories", this.category).then(() => {
-        this.updatePages();
-      });
+      this.$store.dispatch("updateCategories", this.category);
     } else {
-      this.$store.dispatch("updateCategories", "top").then(() => {
-        this.updatePages();
-      });
+      this.$store.dispatch("updateCategories", "top");
     }
   }
 }
@@ -83,7 +105,6 @@ export default {
 
 <style lang="stylus">
 #contents
-  width 960px
   margin-right auto
   margin-left auto
   padding-top 6px
@@ -95,56 +116,78 @@ a:hover,a:focus
   text-decoration underline
 a:visited
   color #777
-#page-items
+
+.newsbox
   display flex
   flex-wrap wrap
-  .item
-    width 300px
-    height 240px
-    overflow hidden
-    margin 8px 10px
-    background-color #FFF
-    box-shadow 1px 1px 2px -1px #999
-    .category-color-bar-main
-      position relative
-      height 20px
-      margin-bottom 4px
-    .category-text
-      position absolute
-      left 8px
-      vertical-align middle
-      font-size 13px
-      color #FFF
-      text-decoration none
-    .thumbnail-box
-      height 120px
-    .thumbnail-box a img
+
+.item
+  // 300~340くらいまで可変
+  width 310px
+  height 255px
+  overflow hidden
+  margin 8px 10px
+  background-color #FFF
+  box-shadow 2px 2px 2px -1px #BBB
+  .category-color-bar-main
+    position relative
+    height 23px
+  .category-text
+    position absolute
+    left 10px
+    margin-top 4px
+    vertical-align middle
+    font-size 13px
+    color #FFF
+    text-decoration none
+  .thumbnail-box
+    height 122px
+    a img
       object-fit cover
       width 100%
-      height 120px
-    .item-footer
-      margin 8px 8px
-    .title
-      font-weight bold
-      word-break break-all
-    .title p
-      font-size 14px
-      overflow hidden
-      max-height 40px
-      margin-top 8px
-      margin-bottom 8px
-    .description
-      font-size 10px
-      color #888
-      overflow hidden
-      white-space nowrap
-      text-overflow ellipsis
-      margin-bottom 4px
-    .source
-      font-size 10px
-      color #888
-      overflow hidden
-      white-space nowrap
-      text-overflow ellipsis
+      height 122px
+  .item-footer
+    position relative
+    margin 10px 18px
+    height (255 - 145 - 8*2)px
+  .title
+    word-break break-all
+    a
+      color #333
+      p
+        font-size 14px
+        font-weight bold
+        overflow hidden
+        line-height 1.6
+        max-height ((14*1.6)*2)px
+        min-height ((14*1.6)*2)px
+        margin-top 6px
+        margin-bottom 6px
+        display -webkit-box
+        -webkit-line-clamp 2
+        -webkit-box-orient vertical
+    a:hover,a:focus
+      color #2a6496
+      text-decoration underline
+    a:visited 
+      color #777
+      text-decoration none
+      
+  .description
+    font-size 10px
+    color #888
+    overflow hidden
+    white-space nowrap
+    text-overflow ellipsis
+    margin-bottom 6px
+  .source
+    position absolute
+    width 278px
+    bottom 6px
+    font-size 10px
+    color #999
+    overflow hidden
+    white-space nowrap
+    text-overflow ellipsis
 
 </style>
