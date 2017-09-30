@@ -1,35 +1,26 @@
 <template>
-  <div id="contents">
-    <div class="newsbox">
-      <div v-for="(page,index) in this.$store.state.pages" :key="index">
-        <div class="item" v-bind:key="page.url">
-          <div class="category-color-bar">
-            <div class="category-color-bar-main"
-                 v-bind:style="{ backgroundColor: page.categoryColor}">
-              <a class="category-text">
-                <span class="category-name">{{page.category}}</span>
-              </a>
-            </div>
-          </div>
-          <div class="thumbnail-box">
-            <a v-bind:href="page.url"
-               target="_blank">
-              <img v-bind:src="page.thumbnail"
-                   onerror="this.style.display='none'" />
-            </a>
-          </div>
-          <div class="item-footer">
-            <div class="title">
-              <a
-                 v-bind:href="page.url"
-                 target="_blank">
-                <p>{{page.title}}</p>
-              </a>
-            </div>
-            <p class="description">{{page.description}}</p>
-            <p class="source">source: {{page.site_name}}</p>
-          </div>
+  <div class="newsbox">
+    <div class="item" v-for="(page,index) in this.$store.state.pages" v-bind:key="page.url">
+      <div class="category-color-bar">
+        <div class="category-color-bar-main" v-bind:style="{ backgroundColor: page.categoryColor}">
+          <a class="category-text">
+            <span class="category-name">{{page.category}}</span>
+          </a>
         </div>
+      </div>
+      <div class="thumbnail-box">
+        <a v-bind:href="page.url" target="_blank">
+          <img v-bind:src="page.thumbnail" onerror="this.style.display='none'" />
+        </a>
+      </div>
+      <div class="item-footer">
+        <div class="title">
+          <a v-bind:href="page.url" target="_blank">
+            <p>{{page.title}}</p>
+          </a>
+        </div>
+        <p class="description">{{page.description}}</p>
+        <p class="source">source: {{page.site_name}}</p>
       </div>
     </div>
     <infinite-loading @infinite="infiniteHandler" spinner="waveDots" ref="infiniteLoading">
@@ -52,9 +43,9 @@ export default {
   components: {
     InfiniteLoading,
   },
-  
+
   watch: {
-    category: function (category) {
+    category: function(category) {
       // categoryの更新があった場合はInfiniteをresetし再読み込みできるようにする
       this.updatePages().then(() => {
         this.$refs.infiniteLoading.$emit('$InfiniteLoading:reset');
@@ -63,7 +54,7 @@ export default {
   },
 
   methods: {
-    updatePages: function (offset = 0) {
+    updatePages: function(offset = 0) {
       if (this.category) {
         return this.$store.dispatch("updatePages", {
           categoryName: this.category,
@@ -82,9 +73,9 @@ export default {
       // APIからエラーが返った場合とpageSizeがMAX以上の場合はcompleteとする
       this.updatePages(pageSize).then(() => {
         const _pageSize = this.$store.state.pages.length;
-        if(pageSize !== _pageSize && _pageSize < MAX){
+        if (pageSize !== _pageSize && _pageSize < MAX) {
           $state.loaded();
-        }else{
+        } else {
           $state.complete();
         }
       }).catch((err) => {
@@ -104,10 +95,6 @@ export default {
 </script>
 
 <style lang="stylus">
-#contents
-  margin-right auto
-  margin-left auto
-  padding-top 6px
 a
   color #303030
   text-decoration none
@@ -118,17 +105,19 @@ a:visited
   color #777
 
 .newsbox
+  width 100%
   display flex
   flex-wrap wrap
+  padding-top 6px
 
 .item
-  // 300~340くらいまで可変
-  width 310px
-  height 255px
+  width 31%
+  min-width 290px
+  height 252px
   overflow hidden
-  margin 8px 10px
+  margin 9px 10px
   background-color #FFF
-  box-shadow 2px 2px 2px -1px #BBB
+  box-shadow 2px 2px 2px -1px #CCC
   .category-color-bar-main
     position relative
     height 23px
@@ -183,7 +172,7 @@ a:visited
   .source
     position absolute
     width 278px
-    bottom 6px
+    bottom 8px
     font-size 10px
     color #999
     overflow hidden

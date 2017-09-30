@@ -49,18 +49,25 @@ export default {
 
 html
   height 100%
+  width 100%
 
 body
   background-color #f5f5f5
   font-family Helvetica,Arial,sans-serif
   font-size 100%
   height 100%
+  width 100%
+
+#wrapper
+  width 100%
 
 .sidebar
   position fixed
   width 220px
   height 100%
   background-color #111
+  ul
+    list-style none
 
   li
     text-indent 20px
@@ -107,10 +114,14 @@ body
   font-size 12px
   color #999
 
+.contents
+  width 100%
+
 .news-list
+  width calc(100% - 230px - 20px)
   background-color #f5f5f5
-  padding-top 36px
-  padding-left 230 + 6px
-  padding-right 6px
+  padding-top 40px
+  padding-left 230 + 10px
+  padding-right 10px
 
 </style>
