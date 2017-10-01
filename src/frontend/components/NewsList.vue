@@ -23,7 +23,7 @@
         <p class="source">source: {{page.site_name}}</p>
       </div>
     </div>
-    <infinite-loading @infinite="infiniteHandler" spinner="waveDots" ref="infiniteLoading">
+    <infinite-loading class="center" @infinite="infiniteHandler" spinner="waveDots" ref="infiniteLoading">
       <span slot="no-results"></span>
       <span slot="no-more"></span>
     </infinite-loading>
@@ -104,6 +104,9 @@ a:hover,a:focus
 a:visited
   color #777
 
+.center
+  margin: auto
+
 .newsbox
   width 100%
   display flex
@@ -111,11 +114,11 @@ a:visited
   padding-top 6px
 
 .item
-  width 31%
+  width 30%
   min-width 290px
-  height 252px
+  height 264px
   overflow hidden
-  margin 9px 10px
+  margin 10px 11px
   background-color #FFF
   box-shadow 2px 2px 2px -1px #CCC
   .category-color-bar-main
@@ -138,7 +141,7 @@ a:visited
   .item-footer
     position relative
     margin 10px 18px
-    height (255 - 145 - 8*2)px
+    height (264 - 145 - 8*2)px
   .title
     word-break break-all
     a
@@ -168,13 +171,13 @@ a:visited
     overflow hidden
     white-space nowrap
     text-overflow ellipsis
-    margin-bottom 6px
+    margin-top 12px
   .source
     position absolute
-    width 278px
-    bottom 8px
+    width 100%
+    bottom 6px
     font-size 10px
-    color #999
+    color #AAA
     overflow hidden
     white-space nowrap
     text-overflow ellipsis

@@ -99,7 +99,7 @@ body
   top 0
   left 220px
   width 100%
-  height 38px
+  height 40px
   padding-left 10px
   line-height 38px
   background-color #FFF
@@ -120,7 +120,7 @@ body
 .news-list
   width calc(100% - 230px - 20px)
   background-color #f5f5f5
-  padding-top 40px
+  padding-top 42px
   padding-left 230 + 10px
   padding-right 10px
 
