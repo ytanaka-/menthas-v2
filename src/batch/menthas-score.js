@@ -7,12 +7,13 @@ import _ from "lodash"
 import moment from "moment"
 moment.locale('jp');
 
-const CURATOR_WEIGHT = 10
-const CATEGORY_WEIGHT = 30
+const CURATOR_WEIGHT = 200
 // 一回あたりのページ取得数
 const BULK_PAGE_SIZE = 500
-// 何日前までのEntityに対してScoreを更新するか
-const SCORE_UPDATE_BEFORE = -5
+// 何日前までのEntityに対して更新を実施するか
+const UPDATE_BEFORE = -7
+// sigmoid関数のmidpoint
+const CURATOR_MID_POINT = 4
 
 class MenthasScore {
 
@@ -25,8 +26,8 @@ class MenthasScore {
 
   // 再帰的に処理しながらCategoryを付加していく
   _recursiveAttach(pageCursor) {
-    // 指定日数前までのentityに対してscoreを更新していく
-    const base_date = moment().add(SCORE_UPDATE_BEFORE, 'days').format();
+    // 指定日数前までのentityに対してcategoryを更新
+    const base_date = moment().add(UPDATE_BEFORE, 'days').format();
     Page.fetchListByBookmarkDate(base_date, BULK_PAGE_SIZE, pageCursor, (err, entities, info) => {
       if (err) {
         console.log(err);
@@ -60,17 +61,33 @@ class MenthasScore {
 
   _classifyCategory(entity) {
     const str = entity.title + entity.description;
-    let name = "others";
+    // 各カテゴリごとにpointを出して、最も高いpointを出したカテゴリを採用する
+    // titleとdescriptionにカテゴリキーワードが含まれている場合だけ対象
+    // カテゴリのcuratorがpickしてると1point
+    // 同数の場合はpriorityの高い方とする
+    // カテゴリはpriority順なので<比較の部分でpriorityが大きい方が優先される
+    let tmp = {
+      category: "others",
+      point: 0
+    };
     this.categories.forEach((category) => {
       const tags = category.tags;
       tags.forEach((tag) => {
         if (_.includes(str, tag)) {
-          name = category.name;
-          return
+          const _p = entity.picks.reduce((_p, pick) => {
+            if (_.includes(category.curators, pick)) {
+              _p++;
+            }
+            return _p;
+          }, 0);
+          if(tmp.point < _p){
+            tmp.category = category.name;
+            tmp.point = _p;
+          }
         }
       });
     });
-    return name;
+    return tmp.category;
   }
 
 
@@ -81,9 +98,8 @@ class MenthasScore {
     });
   }
 
-  // 再帰的に処理しながらCategoryを付加していく
   _recursiveUpdateScore(pageCursor) {
-    const base_date = moment().add(SCORE_UPDATE_BEFORE, 'days').format();
+    const base_date = moment().add(UPDATE_BEFORE, 'days').format();
     Page.fetchListByBookmarkDate(base_date, BULK_PAGE_SIZE, pageCursor, (err, entities, info) => {
       if (err) {
         console.log(err);
@@ -134,20 +150,26 @@ class MenthasScore {
       if (_.includes(pageCategory.curators, pick)) {
         _p++;
       } else if(page.category == "others"){
-        // othersの場合はpickした人数だけカウント(暫定)
+        // othersの場合はpickした人数だけカウント
         _p++;
       }
       return _p;
     }, 0);
     const c = pageCategory.score_weight;
     const t = moment().diff(page.bookmark_date, 'hours');
-    const score = (p * 25 + c) * 10 / (t + 2) ^ 1.5
+
+    // 問題
+    // 1pickの記事がtopに出るのは微妙
+    // 2pickから出るくらいで良い
+    // Curatorのweightが高いのでothersが強くなりすぎる
+    const score = (this.sigmoid(p, CURATOR_MID_POINT) * CURATOR_WEIGHT + c) * 10 / ((t + 2) ^ 1.5)
     return score;
+  }
+
+  // 標準シグモイド関数 x0はmidpoint
+  sigmoid(x, x0) {
+    return 1 / (1 + Math.exp(-(x - x0)));
   }
 }
 
-//module.exports = new MenthasScore()
-
-const m = new MenthasScore()
-m.updateLatestScore();
-//m.attachCategory();
+module.exports = new MenthasScore()
