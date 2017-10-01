@@ -25,6 +25,10 @@ class WebPageClient {
       }
 
       page.thumbnail = $("meta[property='og:image']").attr("content");
+      // urlが/hogeのようなlocalを前提にしたものの場合は削除
+      if(/^\//.test(page.thumbnail)){
+        page.thumbnail = '';
+      }
       page.site_name = $("meta[property='og:site_name']").attr("content");
       let description = $("meta[property='og:description']").attr("content") || $("meta[name='description']").attr("content");
       if (description) {

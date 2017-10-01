@@ -7,16 +7,32 @@ const queue = kue.createQueue();
 
 class Crawler {
 
-  start() {
-    const that = this;
+  init() {
     kue.app.listen(5000);
     this.setQueueProcess();
+  }
+
+  start() {
+    const that = this;
     // 各categoryに対して所属するcuratorごとにbookmarkをcheckする
     Category.findAll((err, categories) => {
       if (err) {
         return console.error('Error occurred while background task', err);
       }
-      const category = categories[0]
+      categories.forEach((category)=>{
+        category.curators.forEach((curator)=>{
+          that.createFetchCuratorJob(curator);
+        });
+      });
+    });
+  }
+
+  startCategory(categoryName) {
+    const that = this;
+    Category.findByName(categoryName, (err, category) => {
+      if (err) {
+        return console.error('Error occurred while background task', err);
+      }
       category.curators.forEach((curator)=>{
         that.createFetchCuratorJob(curator);
       });
@@ -42,7 +58,7 @@ class Crawler {
       url: url,
       date: date
     }).on("complete", () => {
-      console.log("complete");
+      console.log(`[complete]${url}`);
     }).on("failed", (err) => {
       console.log(err);
     }).delay(1000).removeOnComplete(true).save()
@@ -154,6 +170,4 @@ class Crawler {
   }
 }
 
-//module.exports = new Crawler()
-const c = new Crawler();
-c.start();
+module.exports = new Crawler()
