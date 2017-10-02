@@ -1,26 +1,28 @@
 <template>
-  <div class="newsbox">
-    <div class="item" v-for="(page,index) in this.$store.state.pages" v-bind:key="page.url">
-      <div class="category-color-bar">
-        <div class="category-color-bar-main" v-bind:style="{ backgroundColor: page.categoryColor}">
-          <a class="category-text">
-            <span class="category-name">{{page.category}}</span>
-          </a>
+  <div>
+    <div class="newsbox">
+      <div class="item" v-for="(page,index) in this.$store.state.pages" v-bind:key="page.url">
+        <div class="category-color-bar">
+          <div class="category-color-bar-main" v-bind:style="{ backgroundColor: page.categoryColor}">
+            <a class="category-text">
+              <span class="category-name">{{page.category}}</span>
+            </a>
+          </div>
         </div>
-      </div>
-      <div class="thumbnail-box">
-        <a v-bind:href="page.url" target="_blank">
-          <img v-bind:src="page.thumbnail" onerror="this.style.display='none'" />
-        </a>
-      </div>
-      <div class="item-footer">
-        <div class="title">
+        <div class="thumbnail-box">
           <a v-bind:href="page.url" target="_blank">
-            <p>{{page.title}}</p>
+            <img v-bind:src="page.thumbnail" onerror="this.style.display='none'" />
           </a>
         </div>
-        <p class="description">{{page.description}}</p>
-        <p class="source">source: {{page.site_name}}</p>
+        <div class="item-footer">
+          <div class="title">
+            <a v-bind:href="page.url" target="_blank">
+              <p>{{page.title}}</p>
+            </a>
+          </div>
+          <p class="description">{{page.description}}</p>
+          <p class="source">source: {{page.site_name}}</p>
+        </div>
       </div>
     </div>
     <infinite-loading class="center" @infinite="infiniteHandler" spinner="waveDots" ref="infiniteLoading">
