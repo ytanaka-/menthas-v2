@@ -7,7 +7,10 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "babel src --out-dir dest --copy-files",
     "start": "node dest/app.js",
-    "webpack": "webpack --watch"
+    "webpack": "webpack --watch",
+    "crawler": "node dest/batch/start-crawler.js",
+    "score": "node dest/batch/start-batch.js updateScore",
+    "category": "node dest/batch/start-batch.js attachCategory"
   },
   "author": "yu_tanaka",
   "license": "",
