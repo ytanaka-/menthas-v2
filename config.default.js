@@ -17,7 +17,7 @@ module.exports = {
     namespace: ''
   },
 
-  cralwer: {
+  crawler: {
     UA: ''
   }
 };
