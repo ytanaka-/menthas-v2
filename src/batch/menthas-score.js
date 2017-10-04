@@ -7,13 +7,18 @@ import _ from "lodash"
 import moment from "moment"
 moment.locale('jp');
 
-const CURATOR_WEIGHT = 200
+const CURATOR_WEIGHT = 150
 // 一回あたりのページ取得数
 const BULK_PAGE_SIZE = 500
 // 何日前までのEntityに対して更新を実施するか
 const UPDATE_BEFORE = -7
 // sigmoid関数のmidpoint
-const CURATOR_MID_POINT = 4
+const CURATOR_MID_POINT = 3
+const SIGMOID_CURVE = 2
+
+// scoreは調整中
+// sigmoidのcurveを2にすることで1pickの記事を出しにくくしている
+// 3人curateしていれば十分質が高いとみなしている
 
 class MenthasScore {
 
@@ -146,7 +151,7 @@ class MenthasScore {
         return category;
       }
     });
-    const p = page.picks.reduce((_p, pick) => {
+    let p = page.picks.reduce((_p, pick) => {
       if (_.includes(pageCategory.curators, pick)) {
         _p++;
       } else if(page.category == "others"){
@@ -158,17 +163,13 @@ class MenthasScore {
     const c = pageCategory.score_weight;
     const t = moment().diff(page.bookmark_date, 'hours');
 
-    // 問題
-    // 1pickの記事がtopに出るのは微妙
-    // 2pickから出るくらいで良い
-    // Curatorのweightが高いのでothersが強くなりすぎる
-    const score = (this.sigmoid(p, CURATOR_MID_POINT) * CURATOR_WEIGHT + c) * 10 / ((t + 2) ^ 1.5)
+    const score = (this.sigmoid(p, CURATOR_MID_POINT, SIGMOID_CURVE) * CURATOR_WEIGHT + c) * 10 / ((t + 2) ^ 1.25)
     return score;
   }
 
   // 標準シグモイド関数 x0はmidpoint
-  sigmoid(x, x0) {
-    return 1 / (1 + Math.exp(-(x - x0)));
+  sigmoid(x, x0, a) {
+    return 1 / (1 + Math.exp(-a*(x - x0)));
   }
 }
 
