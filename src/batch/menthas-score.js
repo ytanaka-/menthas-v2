@@ -9,9 +9,9 @@ moment.locale('jp');
 
 const CURATOR_WEIGHT = 150
 // 一回あたりのページ取得数
-const BULK_PAGE_SIZE = 500
+const BULK_PAGE_SIZE = 250
 // 何日前までのEntityに対して更新を実施するか
-const UPDATE_BEFORE = -7
+const UPDATE_BEFORE = -5
 // sigmoid関数のmidpoint
 const CURATOR_MID_POINT = 3
 const SIGMOID_CURVE = 2
