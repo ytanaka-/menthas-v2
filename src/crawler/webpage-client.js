@@ -16,8 +16,11 @@ class WebPageClient {
       if (res.statusCode !== 200) {
         return callback(new Error("URL StatusCode is not 200."));
       }
+
+      // redirect後のurlを取得するためにres.request.hrefを使う
+      // 短縮URLやリダイレクトされていると同じエントリが重複して生成されてしまう
       let page = {
-        url: url,
+        url: res.request.href,
         title: $("title").text()
       }
       if (typeof page.title === "undefined" || page.title === "") {
