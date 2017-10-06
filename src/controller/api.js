@@ -8,7 +8,7 @@ const PAGE_SIZE = 48;
 router.get('/categories', (req, res) => {
   Category.findAllForFrontEnd((err, categories) => {
     if (err) {
-      console.log(err);
+      console.error(err);
       return res.sendStatus(500);
     } else {
       // @check
@@ -36,6 +36,7 @@ router.get('/categories/:name/pages', (req, res) => {
   if (name === "top") {
     Page.fetchListByScore(PAGE_SIZE, offset, (err, pages) => {
       if (err) {
+        console.error(err);
         return res.sendStatus(500);
       } else {
         return res.json({
@@ -46,6 +47,7 @@ router.get('/categories/:name/pages', (req, res) => {
   } else {
     Page.fetchListByCategoryWithOffset(name, PAGE_SIZE, offset, (err, pages) => {
       if (err) {
+        console.error(err);
         return res.sendStatus(500);
       } else {
         return res.json({

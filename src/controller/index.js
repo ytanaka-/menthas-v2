@@ -13,6 +13,7 @@ router.get('/', (req, res) => {
 router.get('/rss', (req, res) => {
   Page.fetchListByScore(RSS_SIZE, 0,(err, pages)=>{
     if (err) {
+      console.error(err);
       return res.sendStatus(500);
     } else {
       res.set('Content-Type', 'text/xml')
@@ -28,6 +29,7 @@ router.get('/:category', (req, res) => {
   } else {
     _isCategoryCheck(category, (err, isCategory) => {
       if (err) {
+        console.error(err);
         return res.sendStatus(500);
       } else {
         if (isCategory) {
@@ -49,6 +51,7 @@ router.get('/:category/rss', (req, res) => {
   } else {
     _isCategoryCheck(category, (err, isCategory) => {
       if (err) {
+        console.error(err);
         return res.sendStatus(500);
       } else {
         if (isCategory) {
