@@ -32,7 +32,12 @@ class WebPageClient {
       if(/^\//.test(page.thumbnail)){
         page.thumbnail = '';
       }
+      
       page.site_name = $("meta[property='og:site_name']").attr("content");
+      if (typeof page.site_name === "undefined" || page.site_name === "") {
+        page.site_name = res.request.host;
+      }
+      
       let description = $("meta[property='og:description']").attr("content") || $("meta[name='description']").attr("content");
       if (description) {
         description = description.replace(/<("[^"]*"|'[^']*'|[^'">])*>/g, '');
