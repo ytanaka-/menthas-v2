@@ -163,7 +163,7 @@ class MenthasScore {
     const c = pageCategory.score_weight;
     const t = moment().diff(page.bookmark_date, 'hours');
 
-    const score = (this.sigmoid(p, CURATOR_MID_POINT, SIGMOID_CURVE) * CURATOR_WEIGHT + c) * 10 / ((t + 2) ^ 1.25)
+    const score = (this.sigmoid(p, CURATOR_MID_POINT, SIGMOID_CURVE) * CURATOR_WEIGHT + c) * 10 / ((t + 2) ^ 1.5)
     return score;
   }
 
