@@ -14,10 +14,10 @@ const BULK_PAGE_SIZE = 250
 const UPDATE_BEFORE = -5
 // sigmoid関数のmidpoint
 const CURATOR_MID_POINT = 3
-const SIGMOID_CURVE = 2
+const SIGMOID_CURVE = 1.5
 
 // scoreは調整中
-// sigmoidのcurveを2にすることで1pickの記事を出しにくくしている
+// sigmoidのcurveを調整することで1pickの記事を出しにくくしている
 // 3人curateしていれば十分質が高いとみなしている
 
 class MenthasScore {
@@ -67,7 +67,7 @@ class MenthasScore {
   _classifyCategory(entity) {
     const str = entity.title + entity.description;
     // 各カテゴリごとにpointを出して、最も高いpointを出したカテゴリを採用する
-    // titleとdescriptionにカテゴリキーワードが含まれている場合だけ対象
+    // titleとdescriptionにカテゴリキーワードが含まれている場合は2point
     // カテゴリのcuratorがpickしてると1point
     // 同数の場合はpriorityの高い方とする
     // カテゴリはpriority順なので<比較の部分でpriorityが大きい方が優先される
@@ -77,20 +77,22 @@ class MenthasScore {
     };
     this.categories.forEach((category) => {
       const tags = category.tags;
+      let _p = 0;
       tags.forEach((tag) => {
         if (_.includes(str, tag)) {
-          const _p = entity.picks.reduce((_p, pick) => {
-            if (_.includes(category.curators, pick)) {
-              _p++;
-            }
-            return _p;
-          }, 0);
-          if(tmp.point < _p){
-            tmp.category = category.name;
-            tmp.point = _p;
-          }
+          _p = _p + 2;
+          return;
         }
       });
+      entity.picks.forEach((pick) => {
+        if (_.includes(category.curators, pick)) {
+          _p++;
+        }
+      });
+      if(tmp.point < _p && _p >= 3){
+        tmp.category = category.name;
+        tmp.point = _p;
+      }
     });
     return tmp.category;
   }
@@ -160,6 +162,10 @@ class MenthasScore {
       }
       return _p;
     }, 0);
+    // othersの場合は調整
+    if(page.category == "others"){
+      p = p * 0.5;
+    }
     const c = pageCategory.score_weight;
     const t = moment().diff(page.bookmark_date, 'hours');
 
